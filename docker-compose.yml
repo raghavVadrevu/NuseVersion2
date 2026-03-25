@@ -1,0 +1,5 @@
+version: "3.9"
+
+services:
+  # Services will be defined here (gateway, discovery, acquisition, extraction, processing, chunking, indexing, retrieval, reranking, generation)
+  # as well as infrastructure dependencies (rabbitmq, postgres, redis, qdrant).
