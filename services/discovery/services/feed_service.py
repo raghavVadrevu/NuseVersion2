@@ -8,7 +8,7 @@ import feedparser
 
 from packages.contracts.enums import Category, SourceType
 from packages.contracts.events.article_discovered import ArticleDiscoveredEvent
-from ..config import FEED_MAP
+from config import FEED_MAP
 
 
 def discover_articles(
@@ -17,11 +17,13 @@ def discover_articles(
     total_feeds_checked = 0
     total_entries_seen = 0
     events: List[ArticleDiscoveredEvent] = []
+    seen_links = set()
 
     categories = [category] if category is not None else list(FEED_MAP.keys())
 
     for cat in categories:
         feeds = FEED_MAP.get(cat, [])
+
         for feed_url in feeds:
             parsed = feedparser.parse(feed_url)
             total_feeds_checked += 1
@@ -32,11 +34,10 @@ def discover_articles(
 
             for entry in entries:
                 link = getattr(entry, "link", None)
-                title = getattr(entry, "title", None) or "Untitled"
-
-                if not link:
+                if not link or link in seen_links:
                     continue
 
+                seen_links.add(link)
                 now = datetime.now(timezone.utc)
 
                 event = ArticleDiscoveredEvent(
@@ -50,7 +51,6 @@ def discover_articles(
                     discovered_at=now,
                     category=cat,
                 )
-
                 events.append(event)
 
     stats = {

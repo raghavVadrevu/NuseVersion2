@@ -5,7 +5,7 @@ from typing import Iterable
 import pika
 
 from packages.contracts.events.article_discovered import ArticleDiscoveredEvent
-from ..config import Settings
+from config import Settings
 
 
 class EventPublisher:
@@ -35,12 +35,10 @@ class EventPublisher:
             exchange_type="direct",
             durable=True,
         )
-
         channel.queue_declare(
             queue=self.settings.RABBITMQ_QUEUE,
             durable=True,
         )
-
         channel.queue_bind(
             exchange=self.settings.RABBITMQ_EXCHANGE,
             queue=self.settings.RABBITMQ_QUEUE,
@@ -48,10 +46,8 @@ class EventPublisher:
         )
 
         published_count = 0
-
         for event in events:
             body = event.json()
-
             channel.basic_publish(
                 exchange=self.settings.RABBITMQ_EXCHANGE,
                 routing_key=self.settings.RABBITMQ_ROUTING_KEY,
@@ -61,9 +57,7 @@ class EventPublisher:
                     delivery_mode=2,
                 ),
             )
-
             published_count += 1
 
         connection.close()
-
         return published_count

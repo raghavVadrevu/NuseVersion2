@@ -2,13 +2,13 @@ from __future__ import annotations
 
 from typing import Dict, List
 
-from pydantic import BaseSettings
+from pydantic_settings import BaseSettings
 
 from packages.contracts.enums import Category
 
 
 class Settings(BaseSettings):
-    RABBITMQ_HOST: str = "rabbitmq"
+    RABBITMQ_HOST: str = "localhost"
     RABBITMQ_PORT: int = 5672
     RABBITMQ_USERNAME: str = "guest"
     RABBITMQ_PASSWORD: str = "guest"
